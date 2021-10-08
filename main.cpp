@@ -12,10 +12,13 @@
 #include "User.h"
 
 void generateUsers(std::vector<User>& users);
+void generatePool(Pool& pool);
 
 int main() {
 	std::vector<User> users;
+	Pool pool;
 	generateUsers(users);
+	generatePool(pool);
 
 	return 0;
 }
@@ -34,4 +37,8 @@ void generateUsers(std::vector<User>& users) {
 
 		users.push_back(temp);
 	}
+}
+
+void generatePool(Pool& pool) {
+	Transaction temp;
 }

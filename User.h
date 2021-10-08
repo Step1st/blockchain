@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "hash.h"
+#include "Transaction.h"
 
 class User
 {
@@ -12,6 +13,11 @@ class User
 
 public:
 	User(std::string, uint64_t);
+	User(const User& user);
+	User(User&& user);
 	~User(){};
+
+	Transaction createTransaction(std::string receiver, uint64_t amount);
+
 	std::ostream& operator<<(std::ostream& os);
 };
