@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
+#include <sstream>
 #include <string>
+
+#include "hash.h"
 
 
 class Transaction
@@ -18,5 +21,6 @@ public:
 	~Transaction();
 
 	std::ostream& operator<<(std::ostream& os);
+	bool operator==(const Transaction& transaction);
 };
 

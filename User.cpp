@@ -13,7 +13,7 @@ User::User(const User& user)
 	public_key = user.public_key;
 }
 
-User::User(User&& user)
+User::User(User&& user) noexcept
 {
 	name = user.name;
 	balance = user.balance;
@@ -23,7 +23,17 @@ User::User(User&& user)
 	user.public_key = "";
 }
 
-Transaction User::createTransaction(std::string receiver, uint64_t amount)
+const std::string User::getAdress()
+{
+	return public_key;
+}
+
+const uint64_t User::getBalance()
+{
+	return balance;
+}
+
+const Transaction User::createTransaction(std::string receiver, uint64_t amount)
 {
 	return Transaction(public_key, receiver, amount);
 }
@@ -35,4 +45,9 @@ std::ostream& User::operator<<(std::ostream& os)
 	   << "Balance: " + std::to_string(balance) << "\n";
 
 	return os;
+}
+
+bool User::operator==(const User& user)
+{
+	return name == user.name && public_key == user.public_key && balance == user.balance;
 }
