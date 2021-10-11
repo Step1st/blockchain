@@ -38,16 +38,16 @@ const Transaction User::createTransaction(std::string receiver, uint64_t amount)
 	return Transaction(public_key, receiver, amount);
 }
 
-std::ostream& User::operator<<(std::ostream& os)
-{
-	os << "Name: " + name << "\n"
-	   << "Public_key: " + public_key << "\n"
-	   << "Balance: " + std::to_string(balance) << "\n";
-
-	return os;
-}
-
 bool User::operator==(const User& user)
 {
 	return name == user.name && public_key == user.public_key && balance == user.balance;
+}
+
+std::ostream& operator<<(std::ostream& os, const User& user)
+{
+	os << "Name: " + user.name << "\n"
+		<< "Public_key: " + user.public_key << "\n"
+		<< "Balance: " + std::to_string(user.balance) << "\n";
+
+	return os;
 }

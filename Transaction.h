@@ -13,14 +13,15 @@ class Transaction
 	std::string receiver;
 	uint64_t amount;
 
-private:
-	void doTransaction();
 public:
+	
 	Transaction(std::string sender_, std::string receiver_, uint64_t amount_);
 	Transaction();
 	~Transaction();
 
-	std::ostream& operator<<(std::ostream& os);
+	friend std::ostream& operator<<(std::ostream& os, const Transaction& tx);
 	bool operator==(const Transaction& transaction);
 };
+
+std::ostream& operator<<(std::ostream& os, const Transaction& tx);
 

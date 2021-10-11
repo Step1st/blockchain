@@ -7,12 +7,13 @@
 #include "Consts.h"
 #include "hash.h"
 #include "Transaction.h"
+#include "User.h"
 
 class Block
 {
 public:
+	std::string block_hash = "";
 	std::string prev_hash = "";
-	std::string hash = "";
 	uint32_t timestamp;
 	std::string version;
 	std::string merkle_root = "";
@@ -21,10 +22,16 @@ public:
 
 	std::vector<Transaction> block_transactions;
 
+private:
+	void merkleRoot();
+
 public:
-	Block();
+	Block(std::string hash);
 	~Block();
-	std::string getHash();
-	std::string Hash();
+	const std::string getHash();
+	const std::string hashBlock();
+	void addTransactions(const std::vector<Transaction>& transactions);
+	void mine();
+	
 };
 

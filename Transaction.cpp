@@ -21,13 +21,13 @@ Transaction::Transaction()
 
 Transaction::~Transaction(){}
 
-std::ostream& Transaction::operator<<(std::ostream& os)
-{
-    os << id << "\n" << sender << "\n" << receiver << "\n" << amount << "\n";
-    return os;
-}
-
 bool Transaction::operator==(const Transaction& tx)
 {
     return id == tx.id && sender == tx.sender && receiver == tx.receiver && amount == tx.amount;
+}
+
+std::ostream& operator<<(std::ostream& os, const Transaction& tx)
+{
+    os << tx.id << "\n" << tx.sender << "\n" << tx.receiver << "\n" << tx.amount << "\n";
+    return os;
 }

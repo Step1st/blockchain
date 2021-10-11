@@ -5,6 +5,7 @@
 #include "hash.h"
 #include "Transaction.h"
 
+
 class User
 {
 	std::string public_key;
@@ -21,7 +22,6 @@ public:
 	const uint64_t getBalance();
 
 	const Transaction createTransaction(std::string receiver, uint64_t amount);
-
-	std::ostream& operator<<(std::ostream& os);
+	friend std::ostream& operator<<(std::ostream& os, const User& user);
 	bool operator== (const User& user);
 };

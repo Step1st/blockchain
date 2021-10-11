@@ -12,8 +12,6 @@
 #include "hash.h"
 #include "User.h"
 
-
-
 void generateUsers(std::vector<User>& users);
 void generatePool(Pool& pool, std::vector<User>& users);
 
@@ -21,15 +19,24 @@ int main() {
 	std::vector<User> users;
 	Pool pool;
 	Blockchain blockchain;
+	int i = 1;
 	generateUsers(users);
 	generatePool(pool, users);
 
+	
 	while (!pool.empty())
 	{
-		Block block;
-
+		std::cout << "Mining: " << i << std::endl;
+		Block block(blockchain.getLastHash());
+		std::vector<Transaction> tx_buffer;
+		tx_buffer = pool.getTransactions();
+		block.addTransactions(tx_buffer);
+		block.mine();
+		pool.removeTransactions(tx_buffer);
+		blockchain.addBlock(block); 
+		i++;
 	}
-
+	std::cout << "finished" << std::endl;
 
 	return 0;
 }
@@ -44,7 +51,7 @@ void generateUsers(std::vector<User>& users) {
 	for (size_t i = 0; i < USER_NUMBER; i++)
 	{
 		User temp("user" + std::to_string(i + 1), distribution(generator));
-		temp << output;
+		output << temp;
 		output << "----------------------------------------\n";
 
 		users.push_back(temp);
