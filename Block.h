@@ -32,6 +32,8 @@ public:
 	const std::string hashBlock();
 	void addTransactions(const std::vector<Transaction>& transactions);
 	void mine();
+	void doTransactions(std::vector<User> users);
 	
+	friend std::ostream& operator<<(std::ostream& os, const Block& block);
 };
 

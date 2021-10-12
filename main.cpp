@@ -21,17 +21,20 @@ int main() {
 	Blockchain blockchain;
 	int i = 1;
 	generateUsers(users);
+	std::cout << "Generating pool..." << std::endl;
 	generatePool(pool, users);
 
 	
 	while (!pool.empty())
 	{
-		std::cout << "Mining: " << i << std::endl;
 		Block block(blockchain.getLastHash());
 		std::vector<Transaction> tx_buffer;
 		tx_buffer = pool.getTransactions();
 		block.addTransactions(tx_buffer);
+		std::cout << "Mining: " << i << std::endl;
 		block.mine();
+		std::cout << "Mining: " << i << " finished" << std::endl;
+		block.doTransactions(users);
 		pool.removeTransactions(tx_buffer);
 		blockchain.addBlock(block); 
 		i++;
@@ -66,13 +69,14 @@ void generatePool(Pool& pool, std::vector<User>& users) {
 
 	for (size_t i = 0; i < TX_NUMBER; i++)
 	{
+		std::cout << i << std::endl;
 		User user_1 = users[distribution_users(generator)];
 		User user_2 = users[distribution_users(generator)];
 		uint64_t amount = distribution_amount(generator);
 
-		while (user_1 == user_2)
+		while (user_1 == user_2 || user_1.getBalance() < amount);
 		{
-			User user_2 = users[distribution_users(generator)];
+			User user_1 = users[distribution_users(generator)];
 		}
 		while (user_1.getBalance() < amount)
 		{

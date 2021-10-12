@@ -21,6 +21,26 @@ Transaction::Transaction()
 
 Transaction::~Transaction(){}
 
+const uint64_t Transaction::getAmount()
+{
+    return amount;
+}
+
+const std::string Transaction::getID()
+{
+    return id;
+}
+
+const std::string Transaction::getSender()
+{
+    return sender;
+}
+
+const std::string Transaction::getReceiver()
+{
+    return receiver;
+}
+
 bool Transaction::operator==(const Transaction& tx)
 {
     return id == tx.id && sender == tx.sender && receiver == tx.receiver && amount == tx.amount;

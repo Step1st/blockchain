@@ -22,13 +22,14 @@ Block::~Block(){}
 void Block::addTransactions(const std::vector<Transaction>& transactions)
 {
 	block_transactions = transactions;
-
 }
 
 void Block::mine()
 {
-
-	while ((block_hash = hashBlock()).substr(0, difficulty) != std::string('0', difficulty));
+	while ((block_hash = hashBlock()).substr(1, difficulty) != std::string(difficulty, '0')) {
+		std::cout << block_hash << "\n";
+		nonce++;
+	}
 }
 
 const std::string Block::getHash()
@@ -44,17 +45,27 @@ const std::string Block::hashBlock()
 }
 
 
-//void doTransaction(std::vector<User> users);
-//void Block::doTransaction(std::vector<User> users)
-//{
-//	for (auto& tx : block_transactions)
-//	{
-//		auto sender_ = std::find_if(users.begin(), users.end(), [tx](User a) {a.getAdress() == tx.sender; });
-//		auto receiver_ = std::find_if(users.begin(), users.end(), [tx](User a) {a.getAdress() == tx.receiver; });
-//
-//		(*sender_).balance += tx.amount;
-//		(*receiver_).balance -= tx.amount;
-//	}
-//
-//}
+void Block::doTransactions(std::vector<User> users)
+{
+	for (Transaction& tx : block_transactions)
+	{
+		auto sender_ = std::find_if(users.begin(), users.end(), [&tx](User a) { return a.getAdress() == tx.getSender(); });
+		auto receiver_ = std::find_if(users.begin(), users.end(), [&tx](User a) { return a.getAdress() == tx.getReceiver(); });
 
+		(*sender_).removeBalance(tx.getAmount());
+		(*receiver_).addBalance(tx.getAmount());
+	}
+
+}
+
+std::ostream& operator<<(std::ostream& os, const Block& block)
+{
+	os << block.block_hash << "\n"
+		<< block.prev_hash << "\n"
+		<< block.timestamp << "\n"
+		<< block.version << "\n"
+		<< block.merkle_root << "\n"
+		<< block.nonce << "\n"
+		<< block.difficulty << "\n";
+	return os;
+}

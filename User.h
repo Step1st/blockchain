@@ -20,6 +20,8 @@ public:
 
 	const std::string getAdress();
 	const uint64_t getBalance();
+	void addBalance(uint64_t amount);
+	void removeBalance(uint64_t amount);
 
 	const Transaction createTransaction(std::string receiver, uint64_t amount);
 	friend std::ostream& operator<<(std::ostream& os, const User& user);

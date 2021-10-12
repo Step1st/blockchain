@@ -33,6 +33,16 @@ const uint64_t User::getBalance()
 	return balance;
 }
 
+void User::addBalance(uint64_t amount)
+{
+	balance += amount;
+}
+
+void User::removeBalance(uint64_t amount)
+{
+	balance -= amount;
+}
+
 const Transaction User::createTransaction(std::string receiver, uint64_t amount)
 {
 	return Transaction(public_key, receiver, amount);
