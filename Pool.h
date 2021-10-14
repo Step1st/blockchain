@@ -16,5 +16,6 @@ public:
 	void removeTransactions(std::vector<Transaction> tx_to_remove);
 	std::vector<Transaction> getTransactions();
 	bool empty();
+	int size();
 };
 

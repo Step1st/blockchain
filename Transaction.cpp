@@ -43,11 +43,14 @@ const std::string Transaction::getReceiver()
 
 bool Transaction::operator==(const Transaction& tx)
 {
-    return id == tx.id && sender == tx.sender && receiver == tx.receiver && amount == tx.amount;
+    return (id == tx.id) && (sender == tx.sender) && (receiver == tx.receiver) && (amount == tx.amount);
 }
 
 std::ostream& operator<<(std::ostream& os, const Transaction& tx)
 {
-    os << tx.id << "\n" << tx.sender << "\n" << tx.receiver << "\n" << tx.amount << "\n";
+    os << "id: " << tx.id << "\n"
+       << "sender: " << tx.sender << "\n"
+       << "receiver: " << tx.receiver << "\n"
+       << "amount: " << tx.amount << "\n";
     return os;
 }

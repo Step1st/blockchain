@@ -28,18 +28,25 @@ int main() {
 	while (!pool.empty())
 	{
 		Block block(blockchain.getLastHash());
-		std::vector<Transaction> tx_buffer;
-		tx_buffer = pool.getTransactions();
+		std::vector<Transaction> tx_buffer(pool.getTransactions());
 		block.addTransactions(tx_buffer);
 		std::cout << "Mining: " << i << std::endl;
 		block.mine();
 		std::cout << "Mining: " << i << " finished" << std::endl;
 		block.doTransactions(users);
 		pool.removeTransactions(tx_buffer);
+		tx_buffer.clear();
 		blockchain.addBlock(block); 
 		i++;
 	}
-	std::cout << "finished" << std::endl;
+	std::ofstream output("users-end.txt");
+	for (auto& user : users)
+	{
+		output << user;
+		output << "----------------------------------------\n";
+	}
+	output.close();
+	std::cout << "Finished" << std::endl;
 
 	return 0;
 }
@@ -47,7 +54,7 @@ int main() {
 void generateUsers(std::vector<User>& users) {
 	auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	std::mt19937 generator(seed);
-	std::uniform_int_distribution<uint64_t> distribution(1000, 100000);
+	std::uniform_int_distribution<uint64_t> distribution(2000, 100000);
 	std::ofstream output("user_begin.txt");
 	std::stringstream ofbuf;
 
@@ -65,16 +72,16 @@ void generatePool(Pool& pool, std::vector<User>& users) {
 	auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	std::mt19937 generator(seed);
 	std::uniform_int_distribution<int> distribution_users(0, users.size()-1);
-	std::uniform_int_distribution<uint64_t> distribution_amount(1, 5000);
+	std::uniform_int_distribution<uint64_t> distribution_amount(1, 500);
+	std::ofstream output("tx_pool.txt");
 
 	for (size_t i = 0; i < TX_NUMBER; i++)
 	{
-		std::cout << i << std::endl;
 		User user_1 = users[distribution_users(generator)];
 		User user_2 = users[distribution_users(generator)];
 		uint64_t amount = distribution_amount(generator);
 
-		while (user_1 == user_2 || user_1.getBalance() < amount);
+		while (user_1 == user_2);
 		{
 			User user_1 = users[distribution_users(generator)];
 		}
@@ -83,6 +90,10 @@ void generatePool(Pool& pool, std::vector<User>& users) {
 			amount = distribution_amount(generator);
 		}
 
-		pool.addTransaction(user_1.createTransaction(user_2.getAdress(), amount));
+		Transaction tx = user_1.createTransaction(user_2.getAdress(), amount);
+		output << tx;
+		output << "---------------------\n";
+		pool.addTransaction(tx);
 	}
+	output.close();
 }

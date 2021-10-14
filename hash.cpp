@@ -37,8 +37,9 @@ std::string hash(std::string input, bool bin)
     std::bitset<8> c("10110101");
     for (auto& Char : input)
     {
-        temp += ((c = (std::bitset<8>(Char) << 3) ^ c) >> 1).to_string();
+        temp += ((c = (((std::bitset<8>(Char) >> 3) | (std::bitset<8>(Char) << ((sizeof(std::bitset<8>(Char)) << 3) - 3))) << 3) ^ c) >> 1).to_string();
         if (iteration % HashLength == 0 && iteration != 0) {
+            std::shuffle(temp.begin(), temp.end(), generator);
             blocks.push_back(std::bitset<256>(temp));
             temp.clear();
         }
@@ -47,13 +48,13 @@ std::string hash(std::string input, bool bin)
 
     for (size_t i = 0; i < blocks.size() - 1; i++)
     {
-        blocks[i] = ((blocks[i] ^ (blocks[i + 1] << 29)));
+        blocks[i] = ((blocks[i] ^ (((blocks[i + 1] >> 29) | ((blocks[i + 1] << ((sizeof((blocks[i + 1]) << 3) - 29))))))));
     }
 
     std::bitset<256> hash = blocks[0];
     for (size_t i = 1; i < blocks.size(); i++)
     {
-        hash ^= (((blocks[i]) << 19));
+        hash ^= ((blocks[i] >> 19) | (blocks[i] << ((sizeof(blocks[i]) << 3) - 19))); // (((blocks[i]) << 19));
     }
 
     for (size_t i = hash.size() - 1; i > 0; i--)
@@ -68,4 +69,3 @@ std::string hash(std::string input, bool bin)
     }
     return bin_to_hex(hashStr.c_str());
 }
-

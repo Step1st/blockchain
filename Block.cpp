@@ -22,14 +22,15 @@ Block::~Block(){}
 void Block::addTransactions(const std::vector<Transaction>& transactions)
 {
 	block_transactions = transactions;
+	merkleRoot();
 }
 
 void Block::mine()
 {
-	while ((block_hash = hashBlock()).substr(1, difficulty) != std::string(difficulty, '0')) {
-		std::cout << block_hash << "\n";
+	while ((block_hash = hashBlock()).substr(0, difficulty) != std::string(difficulty, '0')) {
 		nonce++;
 	}
+
 }
 
 const std::string Block::getHash()
@@ -45,7 +46,7 @@ const std::string Block::hashBlock()
 }
 
 
-void Block::doTransactions(std::vector<User> users)
+void Block::doTransactions(std::vector<User>& users)
 {
 	for (Transaction& tx : block_transactions)
 	{
@@ -60,12 +61,17 @@ void Block::doTransactions(std::vector<User> users)
 
 std::ostream& operator<<(std::ostream& os, const Block& block)
 {
-	os << block.block_hash << "\n"
-		<< block.prev_hash << "\n"
-		<< block.timestamp << "\n"
-		<< block.version << "\n"
-		<< block.merkle_root << "\n"
-		<< block.nonce << "\n"
-		<< block.difficulty << "\n";
+	os << "hash: " << block.block_hash << "\n"
+		<< "prev_hash: " << block.prev_hash << "\n"
+		<< "timestamp: "  << block.timestamp << "\n"
+		<< "version: " << block.version << "\n"
+		<< "merkle_root: " << block.merkle_root << "\n"
+		<< "nonce: " << block.nonce << "\n"
+		<< "difficulty: " << block.difficulty << "\n"
+		<< "Number of transaction: " << block.block_transactions.size() << "\n";
+	for (auto& tx : block.block_transactions)
+	{
+		os << "------------------\n" << tx;
+	}
 	return os;
 }

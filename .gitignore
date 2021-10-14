@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/blocks
+/tx_pool.txt
+/users-end.txt
+/user_begin.txt
