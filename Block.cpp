@@ -33,7 +33,7 @@ bool Block::mine()
 		std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
 		nonce = distribution(generator);
 		i++;
-		if (0 && i > 50000*difficulty)
+		if (i > 10000*difficulty)
 		{
 			return false;
 		}

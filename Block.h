@@ -19,7 +19,7 @@ public:
 	std::string version;
 	std::string merkle_root = "";
 	uint32_t nonce = 0;
-	uint32_t difficulty = 3;
+	uint32_t difficulty = 2;
 
 	std::vector<Transaction> block_transactions;
 

@@ -24,15 +24,15 @@ int main() {
 	std::vector<double> total_time;
 
 	int i = 1;
-	uint64_t balance_before = 0;
+
 	std::cout << "Generating users...\n";
 	generateUsers(users);
 	std::cout << "Generating pool...\n";
-	std::cout << pool.size() << "\n";
 	generatePool(pool, users);
-	const int pool_size_start = pool.size();
-	std::cout << pool.size() << "\n";
 
+	const int pool_size_start = pool.size();
+	int timeout_number = 0;
+	uint64_t balance_before = 0;
 	for (auto& user : users)
 	{
 		balance_before += user.getBalance();
@@ -49,7 +49,7 @@ int main() {
 		if (block.mine())
 		{
 			std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - start;
-			std::cout << "Block finished\nTime: " << diff.count() << "\n\n" << std::endl;
+			std::cout << "Block finished\nTime: " << diff.count() << "s\n" << std::endl;
 			total_time.push_back(diff.count());
 			block.doTransactions(users);
 			pool.removeTransactions(tx_buffer);
@@ -57,7 +57,13 @@ int main() {
 			i++;
 		}
 		else
+		{
+			std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - start;
+			total_time.push_back(diff.count());
 			std::cout << "Block mining timeout\n\n";
+			timeout_number++;
+		}
+			
 		tx_buffer.clear();
 	}
 	std::ofstream output("user_end.txt");
@@ -69,10 +75,11 @@ int main() {
 		output << "----------------------------------------\n";
 	}
 	output.close();
-	std::cout << "Finished" << std::endl;
+	std::cout << "-------------------------" << std::endl;
 
-	std::cout << "Time elapsed: " << std::accumulate(total_time.begin(), total_time.end(), 0.0) << "\n";
+	std::cout << "Time elapsed: " << std::accumulate(total_time.begin(), total_time.end(), 0.0) << "s\n";
 	std::cout << "Blocks mined: " << i-1 << "\n";
+	std::cout << "Timeouts: " << timeout_number << "\n";
 	std::cout << "Transaction difference: " << pool_size_start - blockchain.getTxNumber() << "\n";
 	std::cout << "Balance difference: " << balance_after - balance_before << "\n";
 
