@@ -21,6 +21,16 @@ void Blockchain::addBlock(const Block& block)
 	
 }
 
+const uint64_t Blockchain::getTxNumber()
+{
+	uint64_t temp = 0;
+	for (auto& block : blockchain)
+	{
+		temp += block.getTxNumber();
+	}
+	return temp;
+}
+
 const std::string Blockchain::getLastHash()
 {
 	if (blockchain.empty())

@@ -28,7 +28,7 @@ std::string hash(std::string input, bool bin)
     std::uniform_int_distribution<int> distribution(0, 255);
     while (input.size() % HashLength != 0 || input.size() == 0)
     {
-        input += char(distribution(generator));
+        input += '0';//char(distribution(generator));
     }
 
     std::string temp = "";

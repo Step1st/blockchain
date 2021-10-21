@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <numeric>
 #include <random>
 
 #include "Pool.h"
@@ -19,34 +20,61 @@ int main() {
 	std::vector<User> users;
 	Pool pool;
 	Blockchain blockchain;
-	int i = 1;
-	generateUsers(users);
-	std::cout << "Generating pool..." << std::endl;
-	generatePool(pool, users);
 
-	
+	std::vector<double> total_time;
+
+	int i = 1;
+	uint64_t balance_before = 0;
+	std::cout << "Generating users...\n";
+	generateUsers(users);
+	std::cout << "Generating pool...\n";
+	std::cout << pool.size() << "\n";
+	generatePool(pool, users);
+	const int pool_size_start = pool.size();
+	std::cout << pool.size() << "\n";
+
+	for (auto& user : users)
+	{
+		balance_before += user.getBalance();
+	}
+
 	while (!pool.empty())
 	{
 		Block block(blockchain.getLastHash());
 		std::vector<Transaction> tx_buffer(pool.getTransactions());
 		block.addTransactions(tx_buffer);
-		std::cout << "Mining: " << i << std::endl;
-		block.mine();
-		std::cout << "Mining: " << i << " finished" << std::endl;
-		block.doTransactions(users);
-		pool.removeTransactions(tx_buffer);
+		std::cout << "Mining Block " << i << "\n";
+		auto start = std::chrono::high_resolution_clock::now();
+		
+		if (block.mine())
+		{
+			std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - start;
+			std::cout << "Block finished\nTime: " << diff.count() << "\n\n" << std::endl;
+			total_time.push_back(diff.count());
+			block.doTransactions(users);
+			pool.removeTransactions(tx_buffer);
+			blockchain.addBlock(block);
+			i++;
+		}
+		else
+			std::cout << "Block mining timeout\n\n";
 		tx_buffer.clear();
-		blockchain.addBlock(block); 
-		i++;
 	}
-	std::ofstream output("users-end.txt");
+	std::ofstream output("user_end.txt");
+	uint64_t balance_after = 0;
 	for (auto& user : users)
 	{
+		balance_after += user.getBalance();
 		output << user;
 		output << "----------------------------------------\n";
 	}
 	output.close();
 	std::cout << "Finished" << std::endl;
+
+	std::cout << "Time elapsed: " << std::accumulate(total_time.begin(), total_time.end(), 0.0) << "\n";
+	std::cout << "Blocks mined: " << i-1 << "\n";
+	std::cout << "Transaction difference: " << pool_size_start - blockchain.getTxNumber() << "\n";
+	std::cout << "Balance difference: " << balance_after - balance_before << "\n";
 
 	return 0;
 }
@@ -85,6 +113,7 @@ void generatePool(Pool& pool, std::vector<User>& users) {
 		{
 			User user_1 = users[distribution_users(generator)];
 		}
+
 		while (user_1.getBalance() < amount)
 		{
 			amount = distribution_amount(generator);

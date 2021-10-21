@@ -5,7 +5,7 @@ void Block::merkleRoot()
 	std::stringstream transactions;
 	for (auto& tx : block_transactions)
 	{
-		transactions << tx;
+		transactions << tx.getID();
 	}
 	merkle_root = hash(transactions.str());
 }
@@ -25,12 +25,20 @@ void Block::addTransactions(const std::vector<Transaction>& transactions)
 	merkleRoot();
 }
 
-void Block::mine()
+bool Block::mine()
 {
+	int i = 0;
 	while ((block_hash = hashBlock()).substr(0, difficulty) != std::string(difficulty, '0')) {
-		nonce++;
+		std::mt19937 generator(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+		std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
+		nonce = distribution(generator);
+		i++;
+		if (0 && i > 50000*difficulty)
+		{
+			return false;
+		}
 	}
-
+	return true;
 }
 
 const std::string Block::getHash()
@@ -42,7 +50,12 @@ const std::string Block::hashBlock()
 {
 	std::stringstream block;
 	block << prev_hash << timestamp << version << merkle_root << nonce << difficulty;
-	return hash(block.str());
+	return hash(hash(block.str()));
+}
+
+const uint64_t Block::getTxNumber()
+{
+	return block_transactions.size();
 }
 
 

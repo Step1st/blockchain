@@ -16,6 +16,7 @@ public:
 	User(std::string, uint64_t);
 	User(const User& user);
 	User(User&& user) noexcept;
+	User() {};
 	~User(){};
 
 	const std::string getAdress();

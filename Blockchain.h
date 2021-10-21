@@ -17,6 +17,7 @@ public:
 	Blockchain();
 	~Blockchain();
 	void addBlock(const Block& block);
+	const uint64_t getTxNumber();
 	const std::string getLastHash();
 };
 
