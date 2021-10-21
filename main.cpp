@@ -25,9 +25,9 @@ int main() {
 
 	int i = 1;
 
-	std::cout << "Generating users...\n";
+	std::cout << "Generating users...\n\n";
 	generateUsers(users);
-	std::cout << "Generating pool...\n";
+	std::cout << "Generating pool...\n\n";
 	generatePool(pool, users);
 
 	const int pool_size_start = pool.size();
