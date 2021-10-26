@@ -1,13 +1,34 @@
 #include "Block.h"
 
-void Block::merkleRoot()
+const std::string Block::merkleRoot()
 {
-	std::stringstream transactions;
-	for (auto& tx : block_transactions)
-	{
-		transactions << tx.getID();
+	std::vector<std::string> merkle;
+
+	for (auto& tx : block_transactions) {
+		merkle.push_back(hash(hash(tx.getID())));
 	}
-	merkle_root = hash(transactions.str());
+
+	if (merkle.empty()) {
+		return "null";
+	}
+	if (merkle.size() == 1) {
+		return merkle[0];
+	}
+
+	while (merkle.size() != 1)
+	{
+		std::vector<std::string> temp;
+
+		if (merkle.size() % 2 != 0) {
+			merkle.push_back(merkle.back());
+		}
+		for (size_t i = 0; i < merkle.size(); i+=2)
+		{
+			temp.push_back(hash(hash(merkle[i] + merkle[i + 1])));
+		}
+		merkle = temp;
+	}
+	return merkle[0];
 }
 
 Block::Block(std::string hash)
@@ -22,7 +43,7 @@ Block::~Block(){}
 void Block::addTransactions(const std::vector<Transaction>& transactions)
 {
 	block_transactions = transactions;
-	merkleRoot();
+	merkle_root = merkleRoot();
 }
 
 bool Block::mine()

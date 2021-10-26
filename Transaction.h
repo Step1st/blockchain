@@ -17,6 +17,7 @@ public:
 	Transaction(std::string sender_, std::string receiver_, uint64_t amount_);
 	Transaction();
 	~Transaction();
+	const std::string calcID();
 	const uint64_t getAmount();
 	const std::string getID();
 	const std::string getSender();

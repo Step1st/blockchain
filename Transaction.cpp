@@ -26,6 +26,13 @@ const uint64_t Transaction::getAmount()
     return amount;
 }
 
+const std::string Transaction::calcID()
+{
+    std::stringstream tx_info;
+    tx_info << sender << receiver << amount;
+    return hash(tx_info.str());
+}
+
 const std::string Transaction::getID()
 {
     return id;

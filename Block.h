@@ -12,7 +12,6 @@
 
 class Block
 {
-public:
 	std::string block_hash = "";
 	std::string prev_hash = "";
 	uint32_t timestamp;
@@ -23,12 +22,10 @@ public:
 
 	std::vector<Transaction> block_transactions;
 
-private:
-	void merkleRoot();
-
 public:
 	Block(std::string hash);
 	~Block();
+	const std::string merkleRoot();
 	const std::string getHash();
 	const std::string hashBlock();
 	const uint64_t getTxNumber();

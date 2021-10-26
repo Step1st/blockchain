@@ -39,6 +39,9 @@ std::vector<Transaction> Pool::getTransactions()
 		std::mt19937 generator(seed);
 		for (size_t i = 0; i < BLOCK_TX_SIZE; i++)
 		{
+			while (transactions[i].getID() != transactions[i].calcID()) {
+				transactions.erase(transactions.begin() + i);
+			}
 			rd_index.push_back(i);
 		}
 		for (size_t i = 0; i < BLOCK_TX_SIZE; i++)
