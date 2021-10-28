@@ -5,9 +5,9 @@
 Programa atlikinės šiuos veiksmus:
 -	Sugeneruos ~1000 vartotojų ir išsaugos faile ```user_begin.txt```
 -	Sugeneruos ~10000 transakcijų ir išsaugos faile ```tx_pool.txt```
--	Atliks blokų kasima: 
-    -	Iš transakcijų baseino pasirinkama 100 transakcijų.
-    -	Skaičiuojamas bloko hash‘as atitinkantis difficulty.
+-	Sukurs 5 blokus (`Na`, `Nb`, `Nc`, `Nd`, `Ne`), kur ```N``` yra bloko numeris.
+-	Atliks pirmo blokų kasima: 
+    -	Skaičiuojamas bloko hash‘as atitinkantis difficulty. (jeigu hash'o suskaičiuoti per tam tikra kartu kiek nepavyks, bus imamas sekantis blokas. Jeigu nei vieno neįvyks bloko iškasti bus padidinama kartų kiekis bei sudaryti nauji blokai.)
     -	Transakcijos įvykdomos.
     -	Transakcijos pašalinamos iš transakcijų baseino.
     -	Blokas pridėdamas prie blokų grandinės ir išsaugomas ```blocks/blockN.txt``` , kur ```N``` yra bloko numeris.
@@ -16,29 +16,38 @@ Programa atlikinės šiuos veiksmus:
 ## Naudojimas
 Programos pateikinės progresą tokiu pavidalu: 
 ```
-Mining Block 12
+Mining Block 1a
 Block finished
-Time: 0.453731s
+Time: 0.328666s
 
-Mining Block 13
+-------------------------
+
+Mining Block 2a
 Block finished
-Time: 1.14258s
+Time: 0.028235s
 
-Mining Block 14
+-------------------------
+
+Mining Block 3a
 Block finished
-Time: 1.82131s
+Time: 0.005495s
 
-Mining Block 15
+-------------------------
 _
 ```
 Rodoma kuris blokas kasamas ir kiek laiko užtruko kasimas.
 ##
 Jeigu hash'a nepavyko gauti per tau tikra kieki kartu bus apie tai pranešta tokiu pavidalu:
 ```
-Mining Block 13
-Block mining timeout
+Mining Block 2a
+Block 2a mining timeout
 
-Mining Block 13
+
+Mining Block 2b
+Block finished
+Time: 1.176950s
+
+-------------------------
 _
 ```
 ##
@@ -49,16 +58,19 @@ Block finished
 Time: 0.0424511s
 
 -------------------------
-Time elapsed: 122.273s
+
+Time elapsed: 171.471383s
+Total mining time: 33.679476s
 Blocks mined: 100
-Timeouts: 32
-Transaction difference: 0
+Timeouts: 0
+Transactions removed: 0
 Balance difference: 0
 ```
-`Time elapsed` - Visų blokų kasimo laikas
+`Time elapsed` - Programos veikimo laikas
+`Total mining time` - Visų blokų kasimo laikas
 `Blocks mined` - kiek blokų iškasta
 `Timeouts` - Kiek kartu nepavyko iškasti bloko
-`Transaction difference` - Transakcijų kiekio skirtumas
+`Transactions removed` - Kiek transakcijų buvo ištrinta
 `Balance difference` - Pinigų kiekio skirtumas
 
 ## Failai
@@ -120,11 +132,11 @@ amount: 305
 ## Kasimo sparta
 Lentelėje pateikta kiekvieno `difficulty` skaičiavimo trukmė
 
-| difficulty | total time | 
-| --------- | ---------- | 
-| 1         | 0.137878s  |
-| 2         | 2.09421s   | 
-| 3         | 122.273s   | 
-| 4         | 2292.22s   | 
+| difficulty | total mining time | time elapsed | 
+| --------- | ------------------ | ------------ | 
+| 1         |       0.114543s    | 137.770915s  | 
+| 2         |       1.822739s    | 140.355307s  | 
+| 3         |      33.679476s    | 171.471383s  | 
+| 4         |     606.847089s    | 759.234800s  | 
 
 Dėl hash funkcijos savybių su kiekvienu ` difficulty ` lygiu skaičiavimo laikas kyla ekstremaliai laikas 
