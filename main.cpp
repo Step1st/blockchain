@@ -45,9 +45,6 @@ int main() {
 	while (!pool.empty())
 	{
 		std::vector<Block> blocks;
-		//Block block(blockchain.getLastHash());
-		//std::vector<Transaction> tx_buffer(pool.getTransactions(users));
-		//block.addTransactions(tx_buffer);
 		for (size_t i = 0; i < 5; i++)
 		{
 			blocks.emplace_back(blockchain.getLastHash(), pool.getTransactions(users));
@@ -83,26 +80,6 @@ int main() {
 				std::cout << "-------------------------\n";
 			}
 		}
-
-		//if (block.mine())
-		//{
-		//	std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - start;
-		//	std::cout << "Block finished\nTime: " << std::fixed << diff.count() << "s\n" << std::endl;
-		//	total_time.push_back(diff.count());
-		//	block.doTransactions(users);
-		//	pool.removeTransactions(tx_buffer);
-		//	blockchain.addBlock(block);
-		//	i++;
-		//}
-		//else
-		//{
-		//	std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - start;
-		//	total_time.push_back(diff.count());
-		//	std::cout << "Block mining timeout\n\n";
-		//	timeout_number++;
-		//}
-		//	
-		//tx_buffer.clear();
 	}
 	std::ofstream output("user_end.txt");
 	uint64_t balance_after = 0;
