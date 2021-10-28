@@ -38,6 +38,15 @@ Block::Block(std::string hash)
 	prev_hash = hash;
 }
 
+Block::Block(std::string hash, const std::vector<Transaction>& transactions)
+{
+	prev_hash = hash;
+	timestamp = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+	version = VERSION;
+	block_transactions = transactions;
+	merkle_root = merkleRoot();
+}
+
 Block::~Block(){}
 
 void Block::addTransactions(const std::vector<Transaction>& transactions)
@@ -46,7 +55,7 @@ void Block::addTransactions(const std::vector<Transaction>& transactions)
 	merkle_root = merkleRoot();
 }
 
-bool Block::mine()
+bool Block::mine(uint64_t mining_var)
 {
 	int i = 0;
 	while ((block_hash = hashBlock()).substr(0, difficulty) != std::string(difficulty, '0')) {
@@ -54,7 +63,7 @@ bool Block::mine()
 		std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
 		nonce = distribution(generator);
 		i++;
-		if (i > 10000*difficulty)
+		if (i > mining_var*difficulty)
 		{
 			return false;
 		}
@@ -65,6 +74,11 @@ bool Block::mine()
 const std::string Block::getHash()
 {
 	return block_hash;
+}
+
+const std::vector<Transaction>& Block::getTransactions()
+{
+	return block_transactions;
 }
 
 const std::string Block::hashBlock()
@@ -80,17 +94,13 @@ const uint64_t Block::getTxNumber()
 }
 
 
-void Block::doTransactions(std::vector<User>& users)
+void Block::doTransactions(std::map<std::string, User>& users)
 {
 	for (Transaction& tx : block_transactions)
 	{
-		auto sender_ = std::find_if(users.begin(), users.end(), [&tx](User a) { return a.getAdress() == tx.getSender(); });
-		auto receiver_ = std::find_if(users.begin(), users.end(), [&tx](User a) { return a.getAdress() == tx.getReceiver(); });
-
-		(*sender_).removeBalance(tx.getAmount());
-		(*receiver_).addBalance(tx.getAmount());
+		users[tx.getSender()].removeBalance(tx.getAmount());
+		users[tx.getReceiver()].addBalance(tx.getAmount());
 	}
-
 }
 
 std::ostream& operator<<(std::ostream& os, const Block& block)

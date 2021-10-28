@@ -27,4 +27,5 @@ public:
 	const Transaction createTransaction(std::string receiver, uint64_t amount);
 	friend std::ostream& operator<<(std::ostream& os, const User& user);
 	bool operator== (const User& user);
+	User& operator= (const User& user);
 };

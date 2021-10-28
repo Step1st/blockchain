@@ -24,7 +24,7 @@ void Pool::removeTransactions(std::vector<Transaction> tx_to_remove)
 	}
 }
 
-std::vector<Transaction> Pool::getTransactions()
+std::vector<Transaction> Pool::getTransactions(std::map<std::string, User>& users)
 {
 	if (transactions.size() <= BLOCK_TX_SIZE)
 	{
@@ -37,12 +37,20 @@ std::vector<Transaction> Pool::getTransactions()
 		std::vector<int> rd_index;
 		auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 		std::mt19937 generator(seed);
-		for (size_t i = 0; i < BLOCK_TX_SIZE; i++)
+		int i = 0;
+		while (i != transactions.size())
 		{
-			while (transactions[i].getID() != transactions[i].calcID()) {
+			while (transactions[i].getID() != transactions[i].calcID() || 
+				users[transactions[i].getSender()].getBalance() < transactions[i].getAmount()) {
+				//std::cout << "\n" << transactions[i];
+				//std::cout << "-----------------" << "\n";
+				//std::cout << "calcId: " << transactions[i].calcID() << "\n";
+				//std::cout << "-----------------" << "\n";
+				//std::cout << users[transactions[i].getSender()] << "\n";
 				transactions.erase(transactions.begin() + i);
 			}
 			rd_index.push_back(i);
+			i++;
 		}
 		for (size_t i = 0; i < BLOCK_TX_SIZE; i++)
 		{

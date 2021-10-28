@@ -53,6 +53,14 @@ bool User::operator==(const User& user)
 	return name == user.name && public_key == user.public_key && balance == user.balance;
 }
 
+User& User::operator=(const User& user)
+{
+	this->public_key = user.public_key;
+	this->name = user.name;
+	this->balance = user.balance;
+	return *this;
+}
+
 std::ostream& operator<<(std::ostream& os, const User& user)
 {
 	os << "Name: " + user.name << "\n"

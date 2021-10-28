@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <random>
 #include <chrono>
 
@@ -17,21 +18,23 @@ class Block
 	uint32_t timestamp;
 	std::string version;
 	std::string merkle_root = "";
-	uint32_t nonce = 0;
-	uint32_t difficulty = 2;
+	uint64_t nonce = 0;
+	int difficulty = 1;
 
 	std::vector<Transaction> block_transactions;
 
 public:
 	Block(std::string hash);
+	Block(std::string hash, const std::vector<Transaction>& transactions);
 	~Block();
 	const std::string merkleRoot();
 	const std::string getHash();
+	const std::vector<Transaction>& getTransactions();
 	const std::string hashBlock();
 	const uint64_t getTxNumber();
 	void addTransactions(const std::vector<Transaction>& transactions);
-	bool mine();
-	void doTransactions(std::vector<User>& users);
+	bool mine(uint64_t mining_var);
+	void doTransactions(std::map<std::string, User>& users);
 	
 	friend std::ostream& operator<<(std::ostream& os, const Block& block);
 };
