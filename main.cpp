@@ -6,6 +6,8 @@
 #include <map>
 #include <numeric>
 #include <random>
+#include <thread>
+#include <atomic>
 
 #include "Pool.h"
 #include "Transaction.h"
@@ -14,9 +16,11 @@
 #include "hash.h"
 #include "User.h"
 
+std::atomic_bool f_mine;
 
 void generateUsers(std::map<std::string, User>& users);
 void generatePool(Pool& pool, std::map<std::string, User>& users);
+void mining_instance(Block& block);
 
 int main() {
 	auto begining = std::chrono::high_resolution_clock::now();
@@ -49,35 +53,31 @@ int main() {
 		{
 			blocks.emplace_back(blockchain.getLastHash(), pool.getTransactions(users));
 		}
-		char letter = 'a';
+		std::vector<std::thread> threads;
+		threads.reserve(5);
+		std::cout << "\nMining Block " << i << "\n";
+		f_mine.store(true);
+		int j = 1;
 		for (auto& block : blocks)
 		{
-			std::cout << "\nMining Block " << i << std::string(1,letter)+"\n";
-			auto start = std::chrono::high_resolution_clock::now();
-			if (block.mine(mining_var))
-			{
-				std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - start;
-				std::cout << "Block finished\nTime: " << std::fixed << diff.count() << "s\n" << std::endl;
-				total_time.push_back(diff.count());
+			block.thread = j;
+			threads.emplace_back(mining_instance, std::ref(block));
+			j++;
+		}
+		for (auto& thread : threads)
+		{
+			thread.join();
+		}
+
+		for (auto& block : blocks)
+		{
+			if (block.get_mined()) {
+				std::cout << "Block " << i << " finished by thread " << block.thread << "\n";
 				block.doTransactions(users);
 				pool.removeTransactions(block.getTransactions());
 				blockchain.addBlock(block);
 				i++;
-				mining_var = 10000;
-				std::cout << "-------------------------" << std::endl;
 				break;
-			}
-			else
-			{
-				std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - start;
-				total_time.push_back(diff.count());
-				std::cout << "Block " << i << std::string(1,letter)+" mining timeout\n\n";
-				timeout_number++;
-				letter++;
-			}
-			if (letter == 'f') {
-				mining_var += 5000;
-				std::cout << "-------------------------\n";
 			}
 		}
 	}
@@ -154,4 +154,9 @@ void generatePool(Pool& pool, std::map<std::string, User>& users) {
 		pool.addTransaction(tx);
 	}
 	output.close();
+}
+
+void mining_instance(Block& block)
+{
+	block.mine(f_mine);
 }

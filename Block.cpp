@@ -33,7 +33,7 @@ const std::string Block::merkleRoot()
 
 Block::Block(std::string hash)
 {
-	timestamp = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+	timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 	version = VERSION;
 	prev_hash = hash;
 }
@@ -55,19 +55,25 @@ void Block::addTransactions(const std::vector<Transaction>& transactions)
 	merkle_root = merkleRoot();
 }
 
-bool Block::mine(uint64_t mining_var)
+bool Block::mine(std::atomic_bool& flag)
 {
+	std::mt19937 generator(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+	std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
 	int i = 0;
 	while ((block_hash = hashBlock()).substr(0, difficulty) != std::string(difficulty, '0')) {
-		std::mt19937 generator(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-		std::uniform_int_distribution<uint64_t> distribution(0, UINT64_MAX);
-		nonce = distribution(generator);
-		i++;
-		if (i > mining_var*difficulty)
+		if (!flag)
 		{
 			return false;
 		}
+		if (i > 10000 * difficulty)
+		{
+			return false;
+		}
+		nonce = distribution(generator);
+		i++;
 	}
+	flag = false;
+	mined = true;
 	return true;
 }
 
