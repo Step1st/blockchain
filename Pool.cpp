@@ -38,12 +38,8 @@ std::vector<Transaction> Pool::getTransactions(std::map<std::string, User>& user
 		auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 		std::mt19937 generator(seed);
 		int i = 0;
-		while (i != transactions.size())
+		while (i < transactions.size())
 		{
-			while (transactions[i].getID() != transactions[i].calcID() || 
-				users[transactions[i].getSender()].getBalance() < transactions[i].getAmount()) {
-				transactions.erase(transactions.begin() + i);
-			}
 			rd_index.push_back(i);
 			i++;
 		}
@@ -52,7 +48,15 @@ std::vector<Transaction> Pool::getTransactions(std::map<std::string, User>& user
 			std::uniform_int_distribution<int> distribution(0, (rd_index.size() - 1));
 			int index = rd_index[distribution(generator)];
 			rd_index.erase(std::remove(rd_index.begin(), rd_index.end(), index));
-			selected_transactions.push_back(transactions[index]);
+			if (transactions[index].getID() != transactions[index].calcID() ||
+				users[transactions[index].getSender()].getBalance() < transactions[index].getAmount())
+			{
+				transactions.erase(transactions.begin() + index);
+			}
+			else
+			{
+				selected_transactions.push_back(transactions[index]);
+			}
 		}
 
 		return selected_transactions;
