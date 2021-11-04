@@ -2,7 +2,7 @@
 
 ## Veikio pricimas
 Ši programa simuliuoja supaprastinta blokų grandinę.   
-Programa eiga:
+Programos eiga:
 -	Sugeneruojama ~1000 vartotojų ir išsaugoma faile ```user_begin.txt```
 -	Sugeneruojama ~10000 transakcijų ir išsaugoma faile ```tx_pool.txt```
 -	Vykdoma cikle kol baseine yra transakcijų: 
@@ -11,6 +11,7 @@ Programa eiga:
     -   Laukiama pirmo pabaigto bloko.
     -	Bloko Transakcijos įvykdomos.
     -	Bloko Transakcijos pašalinamos iš transakcijų baseino.
+
     -	Blokas pridėdamas prie blokų grandinės ir išsaugomas ```blocks/blockN.txt``` , kur ```N``` yra bloko numeris.
 -	Pasibaigus transakcijoms vartotoju būsena išsaugoma faile ```user_end.txt```.
 
@@ -32,12 +33,13 @@ Block 86 finished by thread 4
 
 --------------------------
 
-Mining Block 15
+Mining Block 87
 _
 ```
 ##
 Jeigu hash'a nepavyko gauti per tau tikra kieki kartu bus apie tai pranešta tokiu pavidalu:
 ```
+
 Mining Block 13
 Mining Block 13 failed
 
@@ -52,6 +54,7 @@ Mining Block 100
 Block 100 finished by thread 4
 
 -------------------------
+
 
 Time elapsed: 168.881s
 Total time mining: 141.288823s
