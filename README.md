@@ -53,7 +53,7 @@ Block 100 finished by thread 4
 
 -------------------------
 
-Time elapsed: 280.881s
+Time elapsed: 168.881s
 Total time mining: 141.288823s
 Blocks mined: 100
 Timeouts: 2
