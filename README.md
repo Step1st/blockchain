@@ -2,76 +2,73 @@
 
 ## Veikio pricimas
 Ši programa simuliuoja supaprastinta blokų grandinę.   
-Programa atlikinės šiuos veiksmus:
--	Sugeneruos ~1000 vartotojų ir išsaugos faile ```user_begin.txt```
--	Sugeneruos ~10000 transakcijų ir išsaugos faile ```tx_pool.txt```
--	Sukurs 5 blokus (`Na`, `Nb`, `Nc`, `Nd`, `Ne`), kur ```N``` yra bloko numeris.
--	Atliks pirmo blokų kasima: 
-    -	Skaičiuojamas bloko hash‘as atitinkantis difficulty. (jeigu hash'o suskaičiuoti per tam tikra kartu kiek nepavyks, bus imamas sekantis blokas. Jeigu nei vieno neįvyks bloko iškasti bus padidinama kartų kiekis bei sudaryti nauji blokai.)
-    -	Transakcijos įvykdomos.
-    -	Transakcijos pašalinamos iš transakcijų baseino.
+Programos eiga:
+-	Sugeneruojama ~1000 vartotojų ir išsaugoma faile ```user_begin.txt```
+-	Sugeneruojama ~10000 transakcijų ir išsaugoma faile ```tx_pool.txt```
+-	Vykdoma cikle kol baseine yra transakcijų: 
+    -	Sugeneruojami 5 blokai po 100 transakcijų.
+    -	Paleidžiamas lygiagretus visų 5 blokų kasimas.
+    -   Laukiama pirmo pabaigto bloko.
+    -	Bloko Transakcijos įvykdomos.
+    -	Bloko Transakcijos pašalinamos iš transakcijų baseino.
+
     -	Blokas pridėdamas prie blokų grandinės ir išsaugomas ```blocks/blockN.txt``` , kur ```N``` yra bloko numeris.
 -	Pasibaigus transakcijoms vartotoju būsena išsaugoma faile ```user_end.txt```.
 
 ## Naudojimas
 Programos pateikinės progresą tokiu pavidalu: 
 ```
-Mining Block 1a
-Block finished
-Time: 0.328666s
+Mining Block 84
+Block 84 finished by thread 3
 
--------------------------
+--------------------------
 
-Mining Block 2a
-Block finished
-Time: 0.028235s
+Mining Block 85
+Block 85 finished by thread 2
 
--------------------------
+--------------------------
 
-Mining Block 3a
-Block finished
-Time: 0.005495s
+Mining Block 86
+Block 86 finished by thread 4
 
--------------------------
+--------------------------
+
+Mining Block 87
 _
 ```
-Rodoma kuris blokas kasamas ir kiek laiko užtruko kasimas.
 ##
 Jeigu hash'a nepavyko gauti per tau tikra kieki kartu bus apie tai pranešta tokiu pavidalu:
 ```
-Mining Block 2a
-Block 2a mining timeout
 
+Mining Block 13
+Mining Block 13 failed
 
-Mining Block 2b
-Block finished
-Time: 1.176950s
-
--------------------------
+--------------------------
+Mining Block 13
 _
 ```
 ##
 Pabaigoje programa pateiks šiuos duomenis: 
 ```
 Mining Block 100
-Block finished
-Time: 0.0424511s
+Block 100 finished by thread 4
 
 -------------------------
 
-Time elapsed: 171.471383s
-Total mining time: 33.679476s
+
+Time elapsed: 168.881s
+Total time mining: 141.288823s
 Blocks mined: 100
-Timeouts: 0
-Transactions removed: 0
+Timeouts: 2
+Transactions removed: 1
 Balance difference: 0
 ```
-`Time elapsed` - Programos veikimo laikas
-`Total mining time` - Visų blokų kasimo laikas
-`Blocks mined` - kiek blokų iškasta
-`Timeouts` - Kiek kartu nepavyko iškasti bloko
-`Transactions removed` - Kiek transakcijų buvo ištrinta
-`Balance difference` - Pinigų kiekio skirtumas
+`Time elapsed` - Programos veikimo laikas  
+`Total time mining` - kiek užtruko blokų kasimas  
+`Blocks mined` - kiek blokų iškasta  
+`Timeouts` - Kiek kartu nepavyko iškasti bloko  
+`Transactions removed` - Kiek transakcijų buvo ištrinta  
+`Balance difference` - Pinigų kiekio skirtumas  
 
 ## Failai
 ### Vartotojų failai
@@ -91,7 +88,7 @@ Public_key: 5C6B832828CABE3D08B23A0B5305F986187AEC630CA4974B84033CFF6F5F36FC
 Balance: 37656
 ----------------------------------------
 ```
-### Transakcijų failai
+### Transakcijų failas
 Faile `tx_pool.txt` saugojami visos sugeneruotos transakcijos tokiu pavidalu: 
 ```
 id: 6418BB25F16777878F1315426D08278ED906C9342D500D0195F7A9AF72BF4966
@@ -111,8 +108,8 @@ struktūra:
 ```
 hash: 001C47FE0C9E43EE0AFDCE7E3A2E9186A58D534774583BA25CE543B13DB218D1
 prev_hash: 0035FF350548A8CB1CA574519A3F44295D54E95355A66164846F3DCB9742C7D5
-timestamp: 4148901820
-version: 0.1
+timestamp: 1636059350442
+version: 0.2.1
 merkle_root: 7239A5D13C9305BDD0CE921F2FFAC8B3CE5C24AA9ECD5B697BA924E21142EF7E
 nonce: 1176796182
 difficulty: 2
@@ -130,13 +127,14 @@ amount: 305
 ------------------
 ```
 ## Kasimo sparta
-Lentelėje pateikta kiekvieno `difficulty` skaičiavimo trukmė
+Lentelėje pateikta kiekvieno `difficulty` 100 blokų kasimo trukmė ir visos programos trukmė
 
 | difficulty | total mining time | time elapsed | 
-| --------- | ------------------ | ------------ | 
-| 1         |       0.114543s    | 137.770915s  | 
-| 2         |       1.822739s    | 140.355307s  | 
-| 3         |      33.679476s    | 171.471383s  | 
-| 4         |     606.847089s    | 759.234800s  | 
+| ---------  | ----------------- | ------------ | 
+| 1          |      0.168634s    | 18.7385s     | 
+| 2          |      0.721589s    | 19.5634s     | 
+| 3          |     7.950040s     | 26.3021s     | 
+| 4          |    156.219676s    | 178.304s     |
+| 5          |    2625.850055s   | 2654.753s    | 
 
-Dėl hash funkcijos savybių su kiekvienu ` difficulty ` lygiu skaičiavimo laikas kyla ekstremaliai laikas 
+Dėl hash funkcijos savybių su kiekvienu ` difficulty ` lygiu kasimo laikas kyla ekstremaliai.

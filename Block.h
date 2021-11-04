@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <string>
 #include <vector>
@@ -15,11 +15,15 @@ class Block
 {
 	std::string block_hash = "";
 	std::string prev_hash = "";
-	uint32_t timestamp;
+	uint64_t timestamp;
 	std::string version;
 	std::string merkle_root = "";
 	uint64_t nonce = 0;
-	int difficulty = 1;
+	int difficulty = 4;
+	bool mined = false;
+
+public:
+	int thread = 0;
 
 	std::vector<Transaction> block_transactions;
 
@@ -32,8 +36,9 @@ public:
 	const std::vector<Transaction>& getTransactions();
 	const std::string hashBlock();
 	const uint64_t getTxNumber();
+	const bool get_mined() { return mined; }
 	void addTransactions(const std::vector<Transaction>& transactions);
-	bool mine(uint64_t mining_var);
+	bool mine(std::atomic_bool& flag, uint64_t mining_attemps);
 	void doTransactions(std::map<std::string, User>& users);
 	
 	friend std::ostream& operator<<(std::ostream& os, const Block& block);
