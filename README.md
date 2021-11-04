@@ -2,42 +2,46 @@
 
 ## Veikio pricimas
 Ši programa simuliuoja supaprastinta blokų grandinę.   
-Programa atlikinės šiuos veiksmus:
--	Sugeneruos ~1000 vartotojų ir išsaugos faile ```user_begin.txt```
--	Sugeneruos ~10000 transakcijų ir išsaugos faile ```tx_pool.txt```
--	Atliks blokų kasima: 
-    -	Iš transakcijų baseino pasirinkama 100 transakcijų.
-    -	Skaičiuojamas bloko hash‘as atitinkantis difficulty.
-    -	Transakcijos įvykdomos.
-    -	Transakcijos pašalinamos iš transakcijų baseino.
+Programa eiga:
+-	Sugeneruojama ~1000 vartotojų ir išsaugoma faile ```user_begin.txt```
+-	Sugeneruojama ~10000 transakcijų ir išsaugoma faile ```tx_pool.txt```
+-	Vykdoma cikle kol baseine yra transakcijų: 
+    -	Sugeneruojami 5 blokai po 100 transakcijų.
+    -	Paleidžiamas lygiagretus visų 5 blokų kasimas.
+    -   Laukiama pirmo pabaigto bloko.
+    -	Bloko Transakcijos įvykdomos.
+    -	Bloko Transakcijos pašalinamos iš transakcijų baseino.
     -	Blokas pridėdamas prie blokų grandinės ir išsaugomas ```blocks/blockN.txt``` , kur ```N``` yra bloko numeris.
 -	Pasibaigus transakcijoms vartotoju būsena išsaugoma faile ```user_end.txt```.
 
 ## Naudojimas
 Programos pateikinės progresą tokiu pavidalu: 
 ```
-Mining Block 12
-Block finished
-Time: 0.453731s
+Mining Block 84
+Block 84 finished by thread 3
 
-Mining Block 13
-Block finished
-Time: 1.14258s
+--------------------------
 
-Mining Block 14
-Block finished
-Time: 1.82131s
+Mining Block 85
+Block 85 finished by thread 2
+
+--------------------------
+
+Mining Block 86
+Block 86 finished by thread 4
+
+--------------------------
 
 Mining Block 15
 _
 ```
-Rodoma kuris blokas kasamas ir kiek laiko užtruko kasimas.
 ##
 Jeigu hash'a nepavyko gauti per tau tikra kieki kartu bus apie tai pranešta tokiu pavidalu:
 ```
 Mining Block 13
-Block mining timeout
+Mining Block 13 failed
 
+--------------------------
 Mining Block 13
 _
 ```
@@ -45,21 +49,23 @@ _
 Pabaigoje programa pateiks šiuos duomenis: 
 ```
 Mining Block 100
-Block finished
-Time: 0.0424511s
+Block 100 finished by thread 4
 
 -------------------------
-Time elapsed: 122.273s
+
+Time elapsed: 280.881s
+Total time mining: 141.288823s
 Blocks mined: 100
-Timeouts: 32
-Transaction difference: 0
+Timeouts: 2
+Transactions removed: 1
 Balance difference: 0
 ```
-`Time elapsed` - Visų blokų kasimo laikas
-`Blocks mined` - kiek blokų iškasta
-`Timeouts` - Kiek kartu nepavyko iškasti bloko
-`Transaction difference` - Transakcijų kiekio skirtumas
-`Balance difference` - Pinigų kiekio skirtumas
+`Time elapsed` - Programos veikimo laikas  
+`Total time mining` - kiek užtruko blokų kasimas  
+`Blocks mined` - kiek blokų iškasta  
+`Timeouts` - Kiek kartu nepavyko iškasti bloko  
+`Transactions removed` - Kiek transakcijų buvo ištrinta  
+`Balance difference` - Pinigų kiekio skirtumas  
 
 ## Failai
 ### Vartotojų failai
@@ -100,7 +106,7 @@ struktūra:
 hash: 001C47FE0C9E43EE0AFDCE7E3A2E9186A58D534774583BA25CE543B13DB218D1
 prev_hash: 0035FF350548A8CB1CA574519A3F44295D54E95355A66164846F3DCB9742C7D5
 timestamp: 4148901820
-version: 0.1
+version: 0.2.1
 merkle_root: 7239A5D13C9305BDD0CE921F2FFAC8B3CE5C24AA9ECD5B697BA924E21142EF7E
 nonce: 1176796182
 difficulty: 2
@@ -118,13 +124,14 @@ amount: 305
 ------------------
 ```
 ## Kasimo sparta
-Lentelėje pateikta kiekvieno `difficulty` skaičiavimo trukmė
+Lentelėje pateikta kiekvieno `difficulty` 100 blokų kasimo trukmė ir visos programos trukmė
 
-| difficulty | total time | 
-| --------- | ---------- | 
-| 1         | 0.137878s  |
-| 2         | 2.09421s   | 
-| 3         | 122.273s   | 
-| 4         | 2292.22s   | 
+| difficulty | total mining time | time elapsed | 
+| ---------  | ----------------- | ------------ | 
+| 1          |      0.168634s    | 18.7385s     | 
+| 2          |      0.721589s    | 19.5634s     | 
+| 3          |     7.950040s     | 26.3021s     | 
+| 4          |    156.219676s    | 178.304s     |
+| 5          |    2625.850055s   | 2654.753s    | 
 
-Dėl hash funkcijos savybių su kiekvienu ` difficulty ` lygiu skaičiavimo laikas kyla ekstremaliai laikas 
+Dėl hash funkcijos savybių su kiekvienu ` difficulty ` lygiu kasimo laikas kyla ekstremaliai.
