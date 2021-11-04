@@ -42,11 +42,6 @@ std::vector<Transaction> Pool::getTransactions(std::map<std::string, User>& user
 		{
 			while (transactions[i].getID() != transactions[i].calcID() || 
 				users[transactions[i].getSender()].getBalance() < transactions[i].getAmount()) {
-				//std::cout << "\n" << transactions[i];
-				//std::cout << "-----------------" << "\n";
-				//std::cout << "calcId: " << transactions[i].calcID() << "\n";
-				//std::cout << "-----------------" << "\n";
-				//std::cout << users[transactions[i].getSender()] << "\n";
 				transactions.erase(transactions.begin() + i);
 			}
 			rd_index.push_back(i);

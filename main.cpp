@@ -20,7 +20,7 @@ std::atomic_bool f_mine;
 
 void generateUsers(std::map<std::string, User>& users);
 void generatePool(Pool& pool, std::map<std::string, User>& users);
-void mining_instance(Block& block);
+void mining_instance(Block& block, uint64_t mining_attemps);
 
 int main() {
 	auto begining = std::chrono::high_resolution_clock::now();
@@ -30,55 +30,64 @@ int main() {
 
 	std::vector<double> total_time;
 
-	int i = 1;
-
 	std::cout << "Generating users...\n";
 	generateUsers(users);
-	std::cout << "Generating pool...\n\n";
+	std::cout << "Generating pool...\n";
 	generatePool(pool, users);
 
 	const int pool_size_start = pool.size();
-	int timeout_number = 0;
+	int timeout_counter = 0;
 	uint64_t balance_before = 0;
 	for (auto& [key, user] : users)
 	{
 		balance_before += user.getBalance();
 	}
 
-	uint64_t mining_var = 10000;
+	int i = 1;
+	uint64_t mining_attemps = 10000;
 	while (!pool.empty())
 	{
+		int i_copy = i;
 		std::vector<Block> blocks;
-		for (size_t i = 0; i < 5; i++)
+		for (size_t i = 0; i < THREAD_COUNT; i++)
 		{
 			blocks.emplace_back(blockchain.getLastHash(), pool.getTransactions(users));
+			blocks[i].thread = i+1;
 		}
 		std::vector<std::thread> threads;
-		threads.reserve(5);
+		threads.reserve(THREAD_COUNT);
 		std::cout << "\nMining Block " << i << "\n";
 		f_mine.store(true);
-		int j = 1;
+
+		auto start = std::chrono::high_resolution_clock::now();
 		for (auto& block : blocks)
 		{
-			block.thread = j;
-			threads.emplace_back(mining_instance, std::ref(block));
-			j++;
+			threads.emplace_back(mining_instance, std::ref(block), mining_attemps);
 		}
 		for (auto& thread : threads)
 		{
 			thread.join();
 		}
+		std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - start;
+		total_time.push_back(diff.count());
 
 		for (auto& block : blocks)
 		{
 			if (block.get_mined()) {
-				std::cout << "Block " << i << " finished by thread " << block.thread << "\n";
+				std::cout << "Block " << i << " finished by thread " << block.thread << "\n\n--------------------------\n";
 				block.doTransactions(users);
 				pool.removeTransactions(block.getTransactions());
 				blockchain.addBlock(block);
 				i++;
+				mining_attemps = 10000;
 				break;
 			}
+		}
+		if (i == i_copy)
+		{
+			std::cout << "Mining Block " << i << " failed\n\n--------------------------\n";
+			timeout_counter++;
+			mining_attemps += 10000;
 		}
 	}
 	std::ofstream output("user_end.txt");
@@ -93,9 +102,9 @@ int main() {
 
 	std::chrono::duration<double> time = std::chrono::high_resolution_clock::now() - begining;
 	std::cout << "\nTime elapsed: " << time.count() << "s\n";
-	std::cout << "Total mining time: " << std::accumulate(total_time.begin(), total_time.end(), 0.0) << "s\n";
+	std::cout << "Total time mining: " << std::fixed << std::accumulate(total_time.begin(), total_time.end(), 0.0) << "s\n";
 	std::cout << "Blocks mined: " << i-1 << "\n";
-	std::cout << "Timeouts: " << timeout_number << "\n";
+	std::cout << "Timeouts: " << timeout_counter << "\n";
 	std::cout << "Transactions removed: " << pool_size_start - blockchain.getTxNumber() << "\n";
 	std::cout << "Balance difference: " << balance_after - balance_before << "\n";
 
@@ -156,7 +165,7 @@ void generatePool(Pool& pool, std::map<std::string, User>& users) {
 	output.close();
 }
 
-void mining_instance(Block& block)
+void mining_instance(Block& block, uint64_t mining_attemps)
 {
-	block.mine(f_mine);
+	block.mine(f_mine, mining_attemps);
 }
